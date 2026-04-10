@@ -7,8 +7,9 @@ services:
       - key: GEMINI_API_KEY
         sync: false # You will paste your API key in the Render dashboard during setup
 
-  - type: static_site
+  - type: web
     name: aviation-ui
+    env: static
     buildCommand: cd frontend && npm install && npm run build
     staticPublishPath: frontend/dist
     envVars:
