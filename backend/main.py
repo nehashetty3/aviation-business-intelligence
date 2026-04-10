@@ -47,6 +47,10 @@ def startup():
     global rec_model, rec_matrix, rec_customers, rec_products, rec_cust_idx, rec_prod_idx
     global elasticity_cache
 
+    # Ensure local directory structure exists
+    os.makedirs("data", exist_ok=True)
+    os.makedirs("public_data", exist_ok=True)
+
     # Load data
     if USE_PG:
         from backend.database import get_df, load_from_df
@@ -71,10 +75,15 @@ def startup():
         df = pd.read_parquet("data/sales.parquet")
 
     df["Date"] = pd.to_datetime(df["Date"])
+    print("[api] Date conversion complete.")
     _build_rfm()
+    print("[api] RFM metrics computed.")
     _train_churn()
+    print("[api] Churn models trained.")
     _detect_anomaly()
+    print("[api] Anomaly detection complete.")
     _train_recommender()
+    print("[api] Recommender systems ready.")
     print("[api] Ready — all models loaded.")
 
 
