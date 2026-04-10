@@ -2,6 +2,7 @@ services:
   - type: web
     name: aviation-api
     env: docker
+    plan: free
     dockerfilePath: ./Dockerfile.backend
     envVars:
       - key: GEMINI_API_KEY
