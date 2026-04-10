@@ -1,0 +1,8 @@
+{
+  "Engine": 12000,
+  "Avionics": 8000,
+  "Airframe": 6000,
+  "Landing Gear": 5000,
+  "Cabin": 3000,
+  "Other": 4000
+}

@@ -1,0 +1,42 @@
+# Run separately if you want the Airflow UI:
+#   docker compose -f docker-compose.airflow.yml up
+services:
+  airflow-webserver:
+    image: apache/airflow:2.9.1
+    environment:
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: sqlite:////opt/airflow/airflow.db
+      AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+      DATABASE_URL: postgresql://avbi:avbi@postgres:5432/aviation_bi
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - airflow_logs:/opt/airflow/logs
+      - ..:/opt/airflow/app
+    ports:
+      - "8080:8080"
+    command: >
+      bash -c "airflow db migrate &&
+               airflow users create --username admin --password admin
+                 --firstname Admin --lastname User --role Admin --email admin@avbi.local &&
+               airflow webserver"
+    healthcheck:
+      test: ["CMD","curl","-f","http://localhost:8080/health"]
+      interval: 30s; retries: 5
+
+  airflow-scheduler:
+    image: apache/airflow:2.9.1
+    environment:
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: sqlite:////opt/airflow/airflow.db
+      DATABASE_URL: postgresql://avbi:avbi@postgres:5432/aviation_bi
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - airflow_logs:/opt/airflow/logs
+      - ..:/opt/airflow/app
+    command: airflow scheduler
+    depends_on:
+      airflow-webserver:
+        condition: service_healthy
+
+volumes:
+  airflow_logs:

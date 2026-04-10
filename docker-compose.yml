@@ -1,0 +1,108 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: avbi-postgres
+    environment:
+      POSTGRES_USER:     avbi
+      POSTGRES_PASSWORD: avbi
+      POSTGRES_DB:       aviation_bi
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL","pg_isready -U avbi -d aviation_bi"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: avbi-backend
+    environment:
+      DATABASE_URL:      postgresql://avbi:avbi@postgres:5432/aviation_bi
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      PYTHONUNBUFFERED:  "1"
+    volumes:
+      - ./data:/app/data
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD","curl","-f","http://localhost:8000/api/health"]
+      interval: 20s
+      timeout: 8s
+      retries: 8
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: avbi-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # Airflow — optional, adds nightly pipeline UI at http://localhost:8080
+  # To enable: docker compose --profile airflow up --build
+  airflow-webserver:
+    profiles: [airflow]
+    image: apache/airflow:2.9.1
+    container_name: avbi-airflow-web
+    environment:
+      AIRFLOW__CORE__EXECUTOR:              LocalExecutor
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN:  postgresql+psycopg2://avbi:avbi@postgres:5432/aviation_bi
+      AIRFLOW__CORE__LOAD_EXAMPLES:         "false"
+      AIRFLOW__WEBSERVER__SECRET_KEY:       avbi-secret-key
+      DATABASE_URL:                         postgresql://avbi:avbi@postgres:5432/aviation_bi
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags
+      - airflow_logs:/opt/airflow/logs
+      - .:/opt/airflow/app
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: >
+      bash -c "
+        airflow db migrate &&
+        airflow users create --username admin --password admin
+          --firstname Admin --lastname User --role Admin
+          --email admin@avbi.local 2>/dev/null || true &&
+        airflow webserver
+      "
+    healthcheck:
+      test: ["CMD","curl","-f","http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    restart: unless-stopped
+
+  airflow-scheduler:
+    profiles: [airflow]
+    image: apache/airflow:2.9.1
+    container_name: avbi-airflow-scheduler
+    environment:
+      AIRFLOW__CORE__EXECUTOR:             LocalExecutor
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://avbi:avbi@postgres:5432/aviation_bi
+      AIRFLOW__CORE__LOAD_EXAMPLES:        "false"
+      DATABASE_URL:                        postgresql://avbi:avbi@postgres:5432/aviation_bi
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags
+      - airflow_logs:/opt/airflow/logs
+      - .:/opt/airflow/app
+    depends_on:
+      airflow-webserver:
+        condition: service_healthy
+    command: airflow scheduler
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+  airflow_logs:

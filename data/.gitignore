@@ -1,0 +1,4 @@
+# Data directory
+# sales.parquet is auto-generated on first backend startup
+# Do not commit sales.parquet to git
+sales.parquet
