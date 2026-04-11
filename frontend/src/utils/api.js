@@ -1,4 +1,5 @@
-const BASE = import.meta.env.VITE_API_URL || '/api'
+const HOST = import.meta.env.VITE_API_URL
+const BASE = HOST ? (HOST.replace(/\/$/, '') + '/api') : '/api'
 
 async function get(path, params = {}) {
   const q = new URLSearchParams(
