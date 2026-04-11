@@ -64,6 +64,18 @@ cd frontend && npm install && npm run dev
 
 ---
 
+## 🧠 Technical Deep Dive
+- **Explainable AI (XAI)**: Implemented **SHAP (SHapley Additive exPlanations)** to decompose XGBoost "black-box" predictions, providing transparent, per-customer waterfall charts that justify churn risk scores to business stakeholders.
+- **OLAP Performance**: Integrated an in-memory **DuckDB** analytics engine to decouple "Ask the Data" query loads from the primary database, ensuring sub-second execution of complex ad-hoc SQL joins.
+- **Architectural Patterns**: Designed a **Star Schema** relational model (Fact_Sales linked to Dimension tables) to optimize analytical query speed and ensure data consistency.
+- **Signal Processing**: Leveraged Prophet's automated **Changepoint Detection** to visualize and quantify historical market shifts, such as post-pandemic supply chain recoveries.
+- **Infrastructure as Code (IaC)**: Optimized deployment using a **Render Blueprint (YAML)** specification, ensuring the entire microservice ecosystem (Dockerized API + Vite Static UI + Cross-Service Networking) is fully reproducible.
 
+---
 
+## 📝 Resume Highlight
+> Built a professional-grade Aviation BI platform featuring 5 production ML models (XGBoost, Prophet, ALS) and a natural-language SQL interface powered by Gemini AI. Implemented a robust data ingestion pipeline capable of mapping real-world MRO datasets to a PostgreSQL star-schema, deployed via a containerized Docker architecture on Render.
 
+---
+
+*Aviation BI v3.0 — Mission Complete.*
