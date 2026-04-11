@@ -1,4 +1,4 @@
-# Aviation BI Dashboard v3.0 ✈️
+# Aviation BI Dashboard ✈️
 
 A professional, full-stack Business Intelligence and Machine Learning platform for aviation MRO (Maintenance, Repair, and Overhaul) sales analytics. Capable of ingesting real-world transaction data and providing AI-powered insights.
 
@@ -6,7 +6,7 @@ A professional, full-stack Business Intelligence and Machine Learning platform f
 
 ---
 
-## 🚀 Professional Stack
+## 🚀 Tech Stack
 - **Backend**: FastAPI (Python 3.11) + PostgreSQL / SQLite fallback
 - **Frontend**: React + Vite + Recharts + Lucide
 - **Analytics**: DuckDB in-memory SQL engine for NL-to-SQL
