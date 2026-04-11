@@ -19,8 +19,8 @@ A professional, full-stack Business Intelligence and Machine Learning platform f
 
 ---
 
-## 🤖 AI Features (Powered by Gemini)
-This system features a deep integration with **Google Gemini** (Free-tier) for:
+## 🤖 AI Features 
+This system features a deep integration with **Google Gemini**  for:
 - **Ask the Data**: Natural language interface that translates questions directly into SQL queries executed against DuckDB.
 - **AI insights**: Automated narrative generation for charts, providing "So-What" analysis on demand.
 
@@ -64,13 +64,6 @@ cd frontend && npm install && npm run dev
 
 ---
 
-## 📝 Resume Highlight
-> Built a professional-grade Aviation BI platform featuring 5 production ML models (XGBoost, Prophet, ALS) and a natural-language SQL interface powered by Gemini AI. Implemented a robust data ingestion pipeline capable of mapping real-world MRO datasets to a PostgreSQL star-schema, deployed via a containerized Docker architecture on Render.
 
----
 
-*Aviation BI v3.0 — Mission Complete.*
-hot-forecast.png
-     docs/screenshot-churn.png
-     docs/screenshot-nlquery.png
--->
+
